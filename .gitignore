@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+var/data
+var/inbox
+*.db
+*.db-journal
+tsconfig.tsbuildinfo

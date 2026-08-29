@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model RuleVersion {
+  id            String    @id
+  rateBps       Int
+  sourceDate    DateTime
+  sourceUrl     String
+  sourceLabel   String
+  invalidatedAt DateTime?
+  createdAt     DateTime  @default(now())
+  sessions      Session[]
+}
+
+model County {
+  id           String    @id
+  name         String
+  officeName   String
+  address      String
+  officialUrl  String
+  hoursText    String
+  lastVerified DateTime
+  sessions     Session[]
+}
+
+model Session {
+  id                String       @id @default(cuid())
+  step              String       @default("eligibility")
+  eligible          Boolean      @default(false)
+  rejectedType      String?
+  answersJson       String?
+  salePriceCents    Int?
+  purchaseDate      String?
+  countyId          String?
+  county            County?      @relation(fields: [countyId], references: [id])
+  spvCents          Int?
+  appraisalFeeCents Int?
+  taxTraceJson      String?
+  ruleVersionId     String?
+  ruleVersion       RuleVersion? @relation(fields: [ruleVersionId], references: [id])
+  paymentState      String       @default("none")
+  orderId           String?      @unique
+  packetToken       String?      @unique
+  expiresAt         DateTime?
+  deletedAt         DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
